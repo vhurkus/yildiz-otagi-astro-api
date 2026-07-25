@@ -39,3 +39,23 @@ jobs:
 
       - name: Build production image
         run: docker build -t yildiz-otagi-astro-api:${{ github.sha }} .
+
+      - name: Smoke-test production image
+        run: |
+          container_id="$(
+            docker run --detach --rm \
+              --publish 8080:8080 \
+              --env ASTRO_API_KEY=ci-test-key \
+              --env SOURCE_COMMIT=${{ github.sha }} \
+              yildiz-otagi-astro-api:${{ github.sha }}
+          )"
+          trap 'docker stop "$container_id" >/dev/null 2>&1 || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8080/source \
+              | grep --quiet "${{ github.sha }}"; then
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs "$container_id"
+          exit 1

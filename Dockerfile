@@ -25,6 +25,7 @@ COPY --from=builder /app/.venv /app/.venv
 COPY main.py ./
 COPY models ./models
 COPY services ./services
+RUN chmod -R u=rwX,go=rX /app
 
 EXPOSE 8080
 
