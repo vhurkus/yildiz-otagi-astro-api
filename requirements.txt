@@ -1,0 +1,7 @@
+fastapi==0.140.0
+uvicorn[standard]==0.51.0
+kerykeion==5.12.9
+pyswisseph==2.10.3.2
+timezonefinder==8.2.5
+pytz==2026.2
+pydantic==2.13.4
